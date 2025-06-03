@@ -1,0 +1,17 @@
+package zoo.animais;  
+
+public abstract class Animal {  
+    private String nome;  
+    private int idade;  
+    private double peso;  
+    private String habitat;  
+
+    public Animal(String nome, int idade, double peso, String habitat) {  
+        this.nome = nome;  
+        this.idade = idade;  
+        this.peso = peso;  
+        this.habitat = habitat;  
+    }  
+
+    public abstract void emitirSom(); // (Req 4 - Método abstrato)  
+}  
