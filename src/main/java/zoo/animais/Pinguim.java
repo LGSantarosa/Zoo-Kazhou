@@ -1,5 +1,7 @@
 package zoo.animais;
 
+
+//Classe 5: pingunim
 public class Pinguim extends Ave {
     public Pinguim(String nome, int idade, double peso) {
         super(nome, idade, peso, "Polo Sul", 0.5);

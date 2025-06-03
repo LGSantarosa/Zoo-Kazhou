@@ -1,5 +1,7 @@
 package zoo.animais;
 
+
+//Classe 4: Leão
 public class Leao extends Mamifero {
     private double tamanhoJuba;
 

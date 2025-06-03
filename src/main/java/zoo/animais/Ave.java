@@ -1,5 +1,6 @@
 package zoo.animais;
 
+//Classe 3: Ave
 public abstract class Ave extends Animal {
     private double envergaduraAsa;
 
