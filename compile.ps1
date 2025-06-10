@@ -1,20 +1,15 @@
 # Script para compilar o projeto Zoo Kazhou
 
-# --- CONFIGURAÇÃO ---
-# Caminho para o diretório 'bin' da sua instalação do JDK.
-$JDK_BIN_PATH = "C:\Program Files\Java\jdk-24\bin"
-# --------------------
-
 # Define os caminhos para os executáveis do Java
-$Javac = Join-Path $JDK_BIN_PATH "javac.exe"
-If (-not (Test-Path $Javac)) {
-    Write-Host "ERRO: Compilador Java (javac.exe) não encontrado no caminho: $Javac"
-    Write-Host "Por favor, verifique o caminho da variável `$JDK_BIN_PATH` no início deste script."
+$Javac = "javac.exe"
+If (-not (Get-Command $Javac -ErrorAction SilentlyContinue)) {
+    Write-Host "ERRO: Compilador Java (javac.exe) não foi encontrado no PATH do sistema."
+    Write-Host "Por favor, configure o JDK corretamente e adicione seu diretório 'bin' à variável de ambiente PATH."
     exit
 }
 
 # Define o classpath, incluindo a biblioteca Gson
-$CLASSPATH = ".\lib\gson-2.10.1.jar;."
+$CLASSPATH = ".\lib\gson-2.10.1.jar"
 
 # Encontra todos os arquivos .java no projeto
 $javaFiles = Get-ChildItem -Path ".\src\main\java" -Recurse -Filter *.java | ForEach-Object { $_.FullName }

@@ -1,4 +1,4 @@
-package zoo.animais; //Organização Lógica do Código
+package zoo.animais;
 
 import zoo.model.Ocorrencia;
 
@@ -41,7 +41,5 @@ public class Animal {
         this.ocorrencias.add(ocorrencia);
     }
 
-    public void emitirSom() {
-        // Implementação padrão vazia, pois não é usada na UI.
-    }
+    public void emitirSom() {}
 }
