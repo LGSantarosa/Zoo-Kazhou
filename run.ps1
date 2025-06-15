@@ -13,9 +13,14 @@ If (-not (Test-Path $Java)) {
     exit
 }
 
-# Define o classpath, incluindo a biblioteca Gson e o diretório de saída 'out'
-$CLASSPATH = ".\lib\gson-2.10.1.jar;.\out"
+# Define o diretório de saída
+$OUTPUT_DIR = ".\out"
 
-# Imprime uma mensagem e executa o servidor
-Write-Host "Iniciando o servidor Zoo Kazhou..."
-& $Java -cp $CLASSPATH zoo.web.ZooServer 
+# Verifica se o diretório de saída existe
+if (-not (Test-Path $OUTPUT_DIR)) {
+    Write-Host "ERRO: Diretório de saída não encontrado. Execute compile.ps1 primeiro."
+    exit
+}
+
+# Executa o programa
+java -cp $OUTPUT_DIR zoo.Main 

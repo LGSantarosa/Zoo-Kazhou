@@ -19,7 +19,7 @@ public class ZooService {
         // Dados de exemplo
         funcionarios.put("admin", new Funcionario("admin", "admin"));
         
-        Animal leao = new Leao("Alex", 5, 190, 0.8);
+        Animal leao = new Leao("Alex", 5);
         animais.put(leao.getId(), leao);
 
         Animal pinguim = new Pinguim("Capitão", 3, 15);
@@ -58,7 +58,7 @@ public class ZooService {
 
     public Ocorrencia registrarOcorrencia(String animalId, String descricao) throws AnimalNaoEncontradoException {
         Animal animal = getAnimalById(animalId);
-        Ocorrencia ocorrencia = new Ocorrencia(descricao);
+        Ocorrencia ocorrencia = new Ocorrencia(descricao, descricao);
         animal.adicionarOcorrencia(ocorrencia);
         return ocorrencia;
     }

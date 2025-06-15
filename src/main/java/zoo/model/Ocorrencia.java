@@ -5,17 +5,27 @@ import java.util.UUID;
 
 public class Ocorrencia {
     private final String id;
+    private String tipo;
     private String descricao;
     private LocalDateTime data;
 
-    public Ocorrencia(String descricao) {
+    public Ocorrencia(String tipo, String descricao) {
         this.id = UUID.randomUUID().toString();
+        this.tipo = tipo;
         this.descricao = descricao;
         this.data = LocalDateTime.now();
     }
 
     public String getId() {
         return id;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     public String getDescricao() {
