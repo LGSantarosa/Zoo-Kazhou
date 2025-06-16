@@ -36,20 +36,21 @@ public class EscritorCSV {
     public static void salvarFuncionarios(String caminhoArquivo,
                                           List<Funcionario> funcionarios,
                                           boolean evitarRecursao) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoArquivo))) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(caminhoArquivo))) {
             writer.write("nome,idade,cargo,salario,ferias,tarefa\n");
-            for (Funcionario funcionario : funcionarios) {
-                // Formato sem chamar métodos que possam causar recursão
-                writer.write(String.format("%s,%d,%s,%.2f,%b,%s\n",
-                        funcionario.getNome(),
-                        funcionario.getIdade(),
-                        funcionario.getCargo(),
-                        funcionario.getSalario(),
-                        funcionario.isEstaDeFerias(),
-                        funcionario.getTarefaAtual()));
+
+            for (Funcionario func : funcionarios) {
+                writer.write(String.format(
+                        "%s,%d,%s,%.2f,%b,%s\n",
+                        func.getNome(),
+                        func.getIdade(),
+                        func.getCargo(),
+                        func.getSalario(),
+                        func.isEstaDeFerias(),
+                        func.getTarefaAtual() != null ? func.getTarefaAtual() : "Nenhuma"
+                ));
 
                 if (!evitarRecursao) {
-                    // Força a escrita imediata no arquivo
                     writer.flush();
                 }
             }

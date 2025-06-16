@@ -103,10 +103,13 @@ public class Funcionario extends SerVivo {
 
     private void salvarDados() {
         try {
-            EscritorCSV.salvarFuncionarios("src/resources/funcionarios.csv",
-                    StatusZoo.getInstance().getFuncionarios(), false);
+            EscritorCSV.salvarFuncionarios(
+                    "src/resources/funcionarios.csv",
+                    StatusZoo.getInstance().getFuncionarios(),
+                    true
+            );
         } catch (Exception e) {
-            System.err.println("Erro ao salvar dados dos funcionários: " + e.getMessage());
+            System.err.println("Erro ao salvar funcionários: " + e.getMessage());
         }
     }
 }

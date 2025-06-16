@@ -1,4 +1,4 @@
 nome,idade,cargo,salario,ferias,tarefa
-João,30,Tratador,3000,00,false,Nenhuma
-Maria,25,Veterinária,5000,00,false,Alimentando Girafa
-Carlos,35,Zelador,2500,00,false,Limpando habitat de Leão
+João,30,Tratador,2500,00,false,Nenhuma
+Maria,28,Veterinária,3500,00,false,Limpando habitat de Leão
+Carlos,45,Zelador,2000,00,false,Limpando habitat de Girafa
