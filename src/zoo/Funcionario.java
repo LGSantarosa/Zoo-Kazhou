@@ -52,26 +52,26 @@ public class Funcionario extends SerVivo {
         return "Olá!";
     }
 
-    // Versão básica sem salvamento automático
+    // sem salvamento automático
     public void tirarFerias() {
         this.estaDeFerias = true;
         this.tarefaAtual = "Nenhuma";
         System.out.println(getNome() + " entrou em férias");
     }
 
-    // Versão com salvamento explícito
+    // com salvamento
     public void tirarFeriasESalvar() {
         tirarFerias();
         salvarDados();
     }
 
-    // Versão básica sem salvamento automático
+    // sem salvamento automático
     public void voltarAoTrabalho() {
         this.estaDeFerias = false;
         System.out.println(getNome() + " retornou ao trabalho");
     }
 
-    // Versão com salvamento explícito
+    // com salvamento explícito
     public void voltarAoTrabalhoESalvar() {
         voltarAoTrabalho();
         salvarDados();
