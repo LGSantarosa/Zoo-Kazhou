@@ -28,9 +28,9 @@ public class StatusZoo {
 
     // Método para obter a única classe (instance, mas é mais facil de eu entender com classe)
     public static synchronized StatusZoo getInstance() throws ZooException {
-        // Verifica se já existe uma classe
+        // Verifica se já existe
         if (instance == null) {
-            // Se NÃO existir, cria uma nova classe do zoológico (só na primeira vez que chamamos)
+            // Se n existir, cria uma nova classe do zoológico (só na primeira vez que chamamos)
             instance = new StatusZoo();
         }
         // Retorna a classe
