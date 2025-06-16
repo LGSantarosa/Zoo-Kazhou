@@ -70,12 +70,10 @@ public class Animal extends SerVivo {
         salvarDados();
     }
 
-    // Método modificado para evitar salvamento automático durante carregamento
     public void setEstaSaudavel(boolean estaSaudavel) {
         this.estaSaudavel = estaSaudavel;
     }
 
-    // Novo método para quando precisamos forçar o salvamento
     public void setEstaSaudavelESalvar(boolean estaSaudavel) {
         this.estaSaudavel = estaSaudavel;
         salvarDados();
