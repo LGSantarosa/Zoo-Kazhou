@@ -17,19 +17,20 @@ public class LeitorCSV {
         List<Animal> animais = new ArrayList<>();
         Path path = Paths.get(caminhoArquivo);
 
-
+        // BufferedReader serve pra ler arquivos csv, implementado para ler o "caminhoArquivo", vulgo animais.csv
         try (BufferedReader br = Files.newBufferedReader(path)) {
             // Pular cabeçalho
             br.readLine();
 
+            // Divide o csv por ,
             String linha;
             while ((linha = br.readLine()) != null) {
                 String[] dados = linha.split(",", -1);
 
-                // Corrige a posição do habitat quando há um zero
+                // Arruma a posição do habitat quando tem o 0
                 String habitat;
                 if (dados.length > 5 && dados[4].equals("0")) {
-                    habitat = dados[5]; // Pega o valor após o zero
+                    habitat = dados[5]; // Pega o valor depois do zero
                 } else {
                     habitat = dados[4]; // Pega o valor normal
                 }
@@ -57,14 +58,7 @@ public class LeitorCSV {
         List<Funcionario> funcionarios = new ArrayList<>();
         Path path = Paths.get(caminhoArquivo);
 
-        // Se o arquivo não existe, cria um novo
-        if (!Files.exists(path)) {
-            try (BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE)) {
-                writer.write("nome,idade,cargo,salario,ferias,tarefa\n");
-            }
-            return funcionarios;
-        }
-
+        // Mesma fita dos animais
         try (BufferedReader br = Files.newBufferedReader(path)) {
             // Pular cabeçalho
             br.readLine();
@@ -73,11 +67,12 @@ public class LeitorCSV {
             while ((linha = br.readLine()) != null) {
                 String[] dados = linha.split(",", -1);
 
-                // Corrige a posição quando há campos extras (como "00")
+                // Arruma a posição quando tem "00" (problema que não foi identificado o pq)
                 boolean temCampoExtra = dados.length > 6 && dados[4].equals("00");
                 int indiceFerias = temCampoExtra ? 5 : 4;
                 int indiceTarefa = temCampoExtra ? 6 : 5;
 
+                //Processa se esta de ferias ou nao e se está trabalhanco ou não
                 try {
                     Funcionario func = new Funcionario(
                             dados[0].trim(),
@@ -86,13 +81,13 @@ public class LeitorCSV {
                             Double.parseDouble(dados[3].trim())
                     );
 
-                    // Configura férias
+                    //Configura férias
                     if (indiceFerias < dados.length) {
                         boolean ferias = Boolean.parseBoolean(dados[indiceFerias].trim());
                         if (ferias) func.tirarFerias();
                     }
 
-                    // Configura tarefa
+                    //Configura tarefa
                     if (indiceTarefa < dados.length && !dados[indiceTarefa].equalsIgnoreCase("null")) {
                         func.setTarefaAtual(dados[indiceTarefa].trim());
                     }

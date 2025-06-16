@@ -12,9 +12,12 @@ import java.util.List;
 
 public class EscritorCSV {
     public static void salvarAnimais(String caminhoArquivo, List<Animal> animais) throws IOException {
+
+        //BufferWriter para escrever no csv caminhoArquivo, vulgo animais.csv (declaração disso direto em Animal)
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(caminhoArquivo))) {
             writer.write("nome,idade,especie,peso,habitat,saudavel\n");
 
+            //Divide com base em como está a formatação de animais.csv, usando ,
             for (Animal animal : animais) {
                 writer.write(String.format(
                         "%s,%d,%s,%.1f,%s,%b\n",
@@ -39,6 +42,7 @@ public class EscritorCSV {
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(caminhoArquivo))) {
             writer.write("nome,idade,cargo,salario,ferias,tarefa\n");
 
+            //Basicamente a mesma coisa de animais, mas agora para funcionarios
             for (Funcionario func : funcionarios) {
                 writer.write(String.format(
                         "%s,%d,%s,%.2f,%b,%s\n",

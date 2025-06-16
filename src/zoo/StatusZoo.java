@@ -17,7 +17,7 @@ public class StatusZoo {
             this.estaAberto = false;
             this.numeroVisitantes = 0;
 
-            // Carrega dados sem disparar salvamento automático
+            // Carrega os dados do csv a partir do leitor
             this.animais = new ArrayList<>(LeitorCSV.carregarAnimais("src/resources/animais.csv"));
             this.funcionarios = new ArrayList<>(LeitorCSV.carregarFuncionarios("src/resources/funcionarios.csv"));
 
@@ -26,18 +26,23 @@ public class StatusZoo {
         }
     }
 
+    // Método para obter a única classe (instance, mas é mais facil de eu entender com classe)
     public static synchronized StatusZoo getInstance() throws ZooException {
+        // Verifica se já existe uma classe
         if (instance == null) {
+            // Se NÃO existir, cria uma nova classe do zoológico (só na primeira vez que chamamos)
             instance = new StatusZoo();
         }
+        // Retorna a classe
         return instance;
     }
 
+    // Método para REINICIAR o zoológico (criar uma nova classe)
     public static synchronized void resetInstance() throws ZooException {
-        instance = new StatusZoo();
+        // Sempre cria uma nova classe, substituindo a anterior
+        instance = new StatusZoo(); // Recarrega os dados basicamente
     }
 
-    // O restante dos métodos permanece igual
     public boolean isEstaAberto() {
         return estaAberto;
     }

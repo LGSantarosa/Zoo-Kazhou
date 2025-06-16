@@ -206,6 +206,7 @@ public class TelaZoologico extends JFrame {
         dialog.setVisible(true);
     }
 
+    //Adaptado para usar os dados do csv
     private void mostrarGerenciamentoFuncionarios() {
         JDialog dialog = new JDialog(this, "Gerenciamento de Funcionários", true);
         dialog.setLayout(new BorderLayout(10, 10));
@@ -223,6 +224,7 @@ public class TelaZoologico extends JFrame {
         painelBotoes.add(btnTarefas);
         painelBotoes.add(btnConcluirTarefa);
 
+        //Adaptado para usar os dados do csv
         DefaultListModel<String> modeloLista = new DefaultListModel<>();
         for (Funcionario func : statusZoo.getFuncionarios()) {
             String status = func.isEstaDeFerias() ? " (DE FÉRIAS)" : " (TRABALHANDO)";
@@ -269,6 +271,7 @@ public class TelaZoologico extends JFrame {
             }
         });
 
+        //Adaptado para usar os dados do csv
         btnTarefas.addActionListener(e -> {
             String selectedFunc = listaFuncionarios.getSelectedValue();
             if (selectedFunc != null) {
@@ -335,11 +338,13 @@ public class TelaZoologico extends JFrame {
             }
         });
 
+        //Adaptado para usar os dados do csv
         btnConcluirTarefa.addActionListener(e -> {
             String selectedFunc = listaFuncionarios.getSelectedValue();
             if (selectedFunc != null) {
                 String nomeFuncionario = selectedFunc.split(" - ")[0];
                 Funcionario func = encontrarFuncionario(nomeFuncionario);
+                //Adaptado para usar os dados do csv
                 if (func != null && !func.isEstaDeFerias() && !func.getTarefaAtual().equals("Nenhuma")) {
                     func.concluirTarefa();
                     atualizarListaFuncionarios(modeloLista, listaFuncionarios);
@@ -356,6 +361,7 @@ public class TelaZoologico extends JFrame {
         dialog.setVisible(true);
     }
 
+    //Adaptado para usar os dados do csv
     private void atualizarListaFuncionarios(DefaultListModel<String> modeloLista, JList<String> listaFuncionarios) {
         modeloLista.clear();
         for (Funcionario func : statusZoo.getFuncionarios()) {
@@ -366,6 +372,7 @@ public class TelaZoologico extends JFrame {
         listaFuncionarios.setModel(modeloLista);
     }
 
+    //Adaptado para usar os dados do csv
     private void mostrarAnimais() {
         StringBuilder info = new StringBuilder();
         info.append("=== Lista de Animais ===\n\n");
@@ -376,6 +383,7 @@ public class TelaZoologico extends JFrame {
         areaStatus.setText(info.toString());
     }
 
+    //Adaptado para usar os dados do csv
     private void mostrarFuncionarios() {
         StringBuilder info = new StringBuilder();
         info.append("=== Lista de Funcionários ===\n\n");
