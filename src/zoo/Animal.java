@@ -74,6 +74,7 @@ public class Animal extends SerVivo {
         this.estaSaudavel = estaSaudavel;
     }
 
+    // Caso comecemos a usar um banco de dados isso será util
     public void setEstaSaudavelESalvar(boolean estaSaudavel) {
         this.estaSaudavel = estaSaudavel;
         salvarDados();
@@ -94,6 +95,7 @@ public class Animal extends SerVivo {
             EscritorCSV.salvarAnimais("src/resources/animais.csv", animaisAtualizados);
         } catch (Exception e) {
             System.err.println("ERRO CRÍTICO ao salvar: " + e.getMessage());
+            //baguho bom de mostrar erros, ajudou no debug de um erro gordo
             e.printStackTrace();
         }
     }
