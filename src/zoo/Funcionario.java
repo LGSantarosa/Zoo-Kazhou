@@ -32,12 +32,12 @@ public class Funcionario extends SerVivo {
         return tarefaAtual;
     }
 
-    // Versão básica sem salvamento automático
+    // sem salvamento automático
     public void setTarefaAtual(String tarefa) {
         this.tarefaAtual = tarefa;
     }
 
-    // Versão com salvamento explícito
+    // com salvamento explícito
     public void setTarefaAtualESalvar(String tarefa) {
         this.tarefaAtual = tarefa;
         salvarDados();

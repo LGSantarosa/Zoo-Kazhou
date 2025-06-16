@@ -40,7 +40,7 @@ public class Animal extends SerVivo {
         // Atualização segura do habitat
         this.habitat = novoHabitat.trim();
 
-        // Salvamento otimizado
+        // Salvamento
         try {
             EscritorCSV.salvarAnimais("src/resources/animais.csv",
                     StatusZoo.getInstance().getAnimais());
@@ -92,7 +92,7 @@ public class Animal extends SerVivo {
             // Pega a lista atualizada de animais
             List<Animal> animaisAtualizados = StatusZoo.getInstance().getAnimais();
 
-            // Sobrescreve o arquivo completamente
+            // Sobrescreve o arquivo
             EscritorCSV.salvarAnimais("src/resources/animais.csv", animaisAtualizados);
         } catch (Exception e) {
             System.err.println("ERRO CRÍTICO ao salvar: " + e.getMessage());
