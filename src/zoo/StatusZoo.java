@@ -1,43 +1,43 @@
-package zoo;
+package src.zoo;
 
-import resources.LeitorCSV;
+import src.resources.LeitorCSV;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StatusZoo {
+    private static StatusZoo instance;
     private boolean estaAberto;
     private List<Animal> animais;
     private List<Funcionario> funcionarios;
     private int numeroVisitantes;
 
-    public StatusZoo() throws ZooException, IOException {
-        this.estaAberto = false;
-        this.animais = new ArrayList<>();
-        this.funcionarios = new ArrayList<>();
-        this.numeroVisitantes = 0;
-
-        carregarDados();
-    }
-
-    private void carregarDados() throws IOException, ZooException {
+    private StatusZoo() throws ZooException {
         try {
-            this.animais = LeitorCSV.carregarAnimais("src/resources/animais.csv");
-            System.out.println("Animais carregados: " + animais.size());
-        } catch (IOException e) {
-            throw new ZooException("Falha ao carregar animais: " + e.getMessage(), e);
-        }
+            this.estaAberto = false;
+            this.numeroVisitantes = 0;
 
-        try {
-            this.funcionarios = LeitorCSV.carregarFuncionarios("src/resources/funcionarios.csv");
-            System.out.println("Funcionários carregados: " + funcionarios.size());
+            // Carrega dados sem disparar salvamento automático
+            this.animais = new ArrayList<>(LeitorCSV.carregarAnimais("src/resources/animais.csv"));
+            this.funcionarios = new ArrayList<>(LeitorCSV.carregarFuncionarios("src/resources/funcionarios.csv"));
+
         } catch (IOException e) {
-            this.animais.clear(); // Limpa dados parciais
-            throw new ZooException("Falha ao carregar funcionários: " + e.getMessage(), e);
+            throw new ZooException("Falha ao carregar dados iniciais: " + e.getMessage(), e);
         }
     }
 
+    public static synchronized StatusZoo getInstance() throws ZooException {
+        if (instance == null) {
+            instance = new StatusZoo();
+        }
+        return instance;
+    }
 
+    public static synchronized void resetInstance() throws ZooException {
+        instance = new StatusZoo();
+    }
+
+    // O restante dos métodos permanece igual
     public boolean isEstaAberto() {
         return estaAberto;
     }
@@ -57,7 +57,9 @@ public class StatusZoo {
             }
             status.append("\n• Funcionários iniciando trabalho:\n");
             for (Funcionario func : funcionarios) {
-                status.append("- ").append(func.getNome()).append(" iniciou suas atividades\n");
+                if (!func.isEstaDeFerias()) {
+                    status.append("- ").append(func.getNome()).append(" (").append(func.getCargo()).append(") iniciou suas atividades\n");
+                }
             }
             status.append("\nZoológico pronto para receber visitantes!");
             return status.toString();
@@ -76,7 +78,9 @@ public class StatusZoo {
             }
             status.append("\n• Funcionários encerrando expediente:\n");
             for (Funcionario func : funcionarios) {
-                status.append("- ").append(func.getNome()).append(" encerrou suas atividades\n");
+                if (!func.isEstaDeFerias()) {
+                    status.append("- ").append(func.getNome()).append(" encerrou suas atividades\n");
+                }
             }
             if (numeroVisitantes > 0) {
                 status.append("\n• ").append(numeroVisitantes).append(" visitantes foram embora");
@@ -88,11 +92,14 @@ public class StatusZoo {
     }
 
     public List<Animal> getAnimais() {
-        return animais;
+        return new ArrayList<>(animais);
     }
 
     public List<Funcionario> getFuncionarios() {
-        return funcionarios;
+        return new ArrayList<>(funcionarios);
     }
 
+    public void adicionarVisitantes(int quantidade) {
+        this.numeroVisitantes += quantidade;
+    }
 }

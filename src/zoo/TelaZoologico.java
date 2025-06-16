@@ -1,4 +1,4 @@
-package zoo;
+package src.zoo;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
 
 public class TelaZoologico extends JFrame {
     private StatusZoo statusZoo;
@@ -24,13 +23,12 @@ public class TelaZoologico extends JFrame {
     public TelaZoologico() {
         configurarJanela();
         try {
+            statusZoo = StatusZoo.getInstance();
             inicializarComponentes();
             iniciarSimulacaoVisitantes();
-        } catch (IOException e) {
-            mostrarMensagemErro("Erro ao carregar dados: " + e.getMessage());
-            System.exit(1);
         } catch (ZooException e) {
-            throw new RuntimeException(e);
+            mostrarMensagemErro("Erro no zoológico: " + e.getMessage());
+            System.exit(1);
         }
     }
 
@@ -42,8 +40,7 @@ public class TelaZoologico extends JFrame {
         random = new Random();
     }
 
-    private void inicializarComponentes() throws IOException, ZooException {
-        statusZoo = new StatusZoo();
+    private void inicializarComponentes() {
         mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
@@ -109,7 +106,6 @@ public class TelaZoologico extends JFrame {
         JPanel botoesPanel = new JPanel(new GridLayout(3, 2, 10, 10));
         botoesPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        // Botões existentes
         btnAbrirFechar = new JButton("Abrir Zoológico");
         estilizarBotao(btnAbrirFechar, new Color(46, 139, 87));
         btnAbrirFechar.addActionListener(e -> alternarEstadoZoologico());
@@ -122,7 +118,6 @@ public class TelaZoologico extends JFrame {
         estilizarBotao(btnVerFuncionarios, new Color(70, 130, 180));
         btnVerFuncionarios.addActionListener(e -> mostrarFuncionarios());
 
-        // Novos botões para funcionalidades adicionais
         JButton btnGerenciarAnimais = new JButton("Gerenciar Animais");
         estilizarBotao(btnGerenciarAnimais, new Color(148, 0, 211));
         btnGerenciarAnimais.addActionListener(e -> mostrarGerenciamentoAnimais());
@@ -131,23 +126,12 @@ public class TelaZoologico extends JFrame {
         estilizarBotao(btnGerenciarFuncionarios, new Color(148, 0, 211));
         btnGerenciarFuncionarios.addActionListener(e -> mostrarGerenciamentoFuncionarios());
 
-        JButton btnRecarregar = new JButton("Recarregar Dados");
-        estilizarBotao(btnRecarregar, new Color(205, 133, 63));
-        btnRecarregar.addActionListener(e -> {
-            try {
-                recarregarDados();
-            } catch (IOException | ZooException ex) {
-                mostrarMensagemErro("Erro ao recarregar dados: " + ex.getMessage());
-            }
-        });
 
-        // Adicionando todos os botões
         botoesPanel.add(btnAbrirFechar);
         botoesPanel.add(btnVerAnimais);
         botoesPanel.add(btnVerFuncionarios);
         botoesPanel.add(btnGerenciarAnimais);
         botoesPanel.add(btnGerenciarFuncionarios);
-        botoesPanel.add(btnRecarregar);
 
         return botoesPanel;
     }
@@ -169,7 +153,6 @@ public class TelaZoologico extends JFrame {
         painelBotoes.add(btnTransferir);
         painelBotoes.add(btnExercitar);
 
-        // Lista de animais
         DefaultListModel<String> modeloLista = new DefaultListModel<>();
         for (Animal animal : statusZoo.getAnimais()) {
             modeloLista.addElement(animal.getNome());
@@ -177,7 +160,6 @@ public class TelaZoologico extends JFrame {
         JList<String> listaAnimais = new JList<>(modeloLista);
         JScrollPane scrollPane = new JScrollPane(listaAnimais);
 
-        // Ações dos botões
         btnExaminar.addActionListener(e -> {
             String selectedAnimal = listaAnimais.getSelectedValue();
             if (selectedAnimal != null) {
@@ -227,22 +209,25 @@ public class TelaZoologico extends JFrame {
     private void mostrarGerenciamentoFuncionarios() {
         JDialog dialog = new JDialog(this, "Gerenciamento de Funcionários", true);
         dialog.setLayout(new BorderLayout(10, 10));
-        dialog.setSize(400, 300);
+        dialog.setSize(500, 400);
         dialog.setLocationRelativeTo(this);
 
-        JPanel painelBotoes = new JPanel(new GridLayout(2, 1, 5, 5));
+        JPanel painelBotoes = new JPanel(new GridLayout(3, 1, 5, 5));
         painelBotoes.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         JButton btnFerias = new JButton("Gerenciar Férias");
         JButton btnTarefas = new JButton("Atribuir Tarefas");
+        JButton btnConcluirTarefa = new JButton("Concluir Tarefa");
 
         painelBotoes.add(btnFerias);
         painelBotoes.add(btnTarefas);
+        painelBotoes.add(btnConcluirTarefa);
 
-        // Lista de funcionários
         DefaultListModel<String> modeloLista = new DefaultListModel<>();
         for (Funcionario func : statusZoo.getFuncionarios()) {
-            modeloLista.addElement(func.getNome());
+            String status = func.isEstaDeFerias() ? " (DE FÉRIAS)" : " (TRABALHANDO)";
+            String tarefa = func.getTarefaAtual().equals("Nenhuma") ? "" : " - " + func.getTarefaAtual();
+            modeloLista.addElement(func.getNome() + " - " + func.getCargo() + status + tarefa);
         }
         JList<String> listaFuncionarios = new JList<>(modeloLista);
         JScrollPane scrollPane = new JScrollPane(listaFuncionarios);
@@ -250,22 +235,35 @@ public class TelaZoologico extends JFrame {
         btnFerias.addActionListener(e -> {
             String selectedFunc = listaFuncionarios.getSelectedValue();
             if (selectedFunc != null) {
-                Funcionario func = encontrarFuncionario(selectedFunc);
+                String nomeFuncionario = selectedFunc.split(" - ")[0];
+                Funcionario func = encontrarFuncionario(nomeFuncionario);
                 if (func != null) {
-                    Object[] options = {"Tirar Férias", "Voltar ao Trabalho"};
-                    int escolha = JOptionPane.showOptionDialog(dialog,
-                            "O que deseja fazer com " + func.getNome() + "?",
-                            "Gerenciar Férias",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE,
-                            null,
-                            options,
-                            options[0]);
-
-                    if (escolha == 0) {
-                        func.tirarFerias();
-                    } else if (escolha == 1) {
-                        func.voltarAoTrabalho();
+                    if (func.isEstaDeFerias()) {
+                        int confirm = JOptionPane.showConfirmDialog(dialog,
+                                func.getNome() + " já está de férias. Deseja fazê-lo voltar ao trabalho?",
+                                "Confirmar",
+                                JOptionPane.YES_NO_OPTION);
+                        if (confirm == JOptionPane.YES_OPTION) {
+                            func.voltarAoTrabalhoESalvar();
+                            atualizarListaFuncionarios(modeloLista, listaFuncionarios);
+                        }
+                    } else {
+                        if (!func.getTarefaAtual().equals("Nenhuma")) {
+                            JOptionPane.showMessageDialog(dialog,
+                                    func.getNome() + " não pode sair de férias enquanto está trabalhando em: " +
+                                            func.getTarefaAtual(),
+                                    "Aviso",
+                                    JOptionPane.WARNING_MESSAGE);
+                        } else {
+                            int confirm = JOptionPane.showConfirmDialog(dialog,
+                                    "Deseja colocar " + func.getNome() + " de férias?",
+                                    "Confirmar",
+                                    JOptionPane.YES_NO_OPTION);
+                            if (confirm == JOptionPane.YES_OPTION) {
+                                func.tirarFeriasESalvar() ;
+                                atualizarListaFuncionarios(modeloLista, listaFuncionarios);
+                            }
+                        }
                     }
                 }
             }
@@ -274,20 +272,36 @@ public class TelaZoologico extends JFrame {
         btnTarefas.addActionListener(e -> {
             String selectedFunc = listaFuncionarios.getSelectedValue();
             if (selectedFunc != null) {
-                Funcionario func = encontrarFuncionario(selectedFunc);
+                String nomeFuncionario = selectedFunc.split(" - ")[0];
+                Funcionario func = encontrarFuncionario(nomeFuncionario);
                 if (func != null) {
-                    Object[] options = {"Alimentar Animal", "Limpar Habitat"};
+                    if (func.isEstaDeFerias()) {
+                        JOptionPane.showMessageDialog(dialog,
+                                func.getNome() + " está de férias e não pode receber tarefas!",
+                                "Aviso",
+                                JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+
+                    if (!func.getTarefaAtual().equals("Nenhuma")) {
+                        JOptionPane.showMessageDialog(dialog,
+                                func.getNome() + " já está trabalhando em: " + func.getTarefaAtual(),
+                                "Aviso",
+                                JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+
+                    Object[] options = {"Alimentar Animal", "Limpar Habitat", "Cancelar"};
                     int escolha = JOptionPane.showOptionDialog(dialog,
                             "Qual tarefa atribuir a " + func.getNome() + "?",
                             "Atribuir Tarefa",
-                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.YES_NO_CANCEL_OPTION,
                             JOptionPane.QUESTION_MESSAGE,
                             null,
                             options,
                             options[0]);
 
                     if (escolha == 0 || escolha == 1) {
-                        // Mostrar lista de animais
                         String[] animaisNomes = statusZoo.getAnimais().stream()
                                 .map(Animal::getNome)
                                 .toArray(String[]::new);
@@ -308,9 +322,11 @@ public class TelaZoologico extends JFrame {
                                             "Qual alimento oferecer?");
                                     if (alimento != null && !alimento.trim().isEmpty()) {
                                         func.alimentarAnimal(animal, alimento);
+                                        atualizarListaFuncionarios(modeloLista, listaFuncionarios);
                                     }
                                 } else {
                                     func.limparHabitat(animal);
+                                    atualizarListaFuncionarios(modeloLista, listaFuncionarios);
                                 }
                             }
                         }
@@ -319,9 +335,61 @@ public class TelaZoologico extends JFrame {
             }
         });
 
+        btnConcluirTarefa.addActionListener(e -> {
+            String selectedFunc = listaFuncionarios.getSelectedValue();
+            if (selectedFunc != null) {
+                String nomeFuncionario = selectedFunc.split(" - ")[0];
+                Funcionario func = encontrarFuncionario(nomeFuncionario);
+                if (func != null && !func.isEstaDeFerias() && !func.getTarefaAtual().equals("Nenhuma")) {
+                    func.concluirTarefa();
+                    atualizarListaFuncionarios(modeloLista, listaFuncionarios);
+                    JOptionPane.showMessageDialog(dialog,
+                            "Tarefa concluída com sucesso!",
+                            "Sucesso",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
+
         dialog.add(scrollPane, BorderLayout.CENTER);
         dialog.add(painelBotoes, BorderLayout.SOUTH);
         dialog.setVisible(true);
+    }
+
+    private void atualizarListaFuncionarios(DefaultListModel<String> modeloLista, JList<String> listaFuncionarios) {
+        modeloLista.clear();
+        for (Funcionario func : statusZoo.getFuncionarios()) {
+            String status = func.isEstaDeFerias() ? " (DE FÉRIAS)" : " (TRABALHANDO)";
+            String tarefa = func.getTarefaAtual().equals("Nenhuma") ? "" : " - " + func.getTarefaAtual();
+            modeloLista.addElement(func.getNome() + " - " + func.getCargo() + status + tarefa);
+        }
+        listaFuncionarios.setModel(modeloLista);
+    }
+
+    private void mostrarAnimais() {
+        StringBuilder info = new StringBuilder();
+        info.append("=== Lista de Animais ===\n\n");
+        for (Animal animal : statusZoo.getAnimais()) {
+            info.append(String.format("Nome: %-15s | Espécie: %-15s | Habitat: %-15s\n",
+                    animal.getNome(), animal.getEspecie(), animal.getHabitat()));
+        }
+        areaStatus.setText(info.toString());
+    }
+
+    private void mostrarFuncionarios() {
+        StringBuilder info = new StringBuilder();
+        info.append("=== Lista de Funcionários ===\n\n");
+        for (Funcionario func : statusZoo.getFuncionarios()) {
+            String status = func.isEstaDeFerias() ? "DE FÉRIAS" : "TRABALHANDO";
+            String tarefa = func.isEstaDeFerias() ? "Sem tarefas (de férias)" : func.getTarefaAtual();
+
+            info.append(String.format("Nome: %-15s | Cargo: %-15s | Status: %-12s | Tarefa: %s\n",
+                    func.getNome(),
+                    func.getCargo(),
+                    status,
+                    tarefa));
+        }
+        areaStatus.setText(info.toString());
     }
 
     private Animal encontrarAnimal(String nome) {
@@ -374,26 +442,6 @@ public class TelaZoologico extends JFrame {
         }
     }
 
-    private void mostrarAnimais() {
-        StringBuilder info = new StringBuilder();
-        info.append("=== Lista de Animais ===\n\n");
-        for (Animal animal : statusZoo.getAnimais()) {
-            info.append(String.format("Nome: %-15s | Espécie: %-15s | Habitat: %-15s\n",
-                    animal.getNome(), animal.getEspecie(), animal.getHabitat()));
-        }
-        areaStatus.setText(info.toString());
-    }
-
-    private void mostrarFuncionarios() {
-        StringBuilder info = new StringBuilder();
-        info.append("=== Lista de Funcionários ===\n\n");
-        for (Funcionario func : statusZoo.getFuncionarios()) {
-            info.append(String.format("Nome: %-15s | Cargo: %-15s | Idade: %d anos\n",
-                    func.getNome(), func.getCargo(), func.getIdade()));
-        }
-        areaStatus.setText(info.toString());
-    }
-
     private void iniciarSimulacaoVisitantes() {
         if (timer != null) {
             timer.cancel();
@@ -405,14 +453,13 @@ public class TelaZoologico extends JFrame {
             @Override
             public void run() {
                 if (statusZoo.isEstaAberto()) {
-                    // Simula flutuação de visitantes
-                    int variacao = random.nextInt(11) - 5; // -5 a +5
+                    int variacao = random.nextInt(11) - 5;
                     visitantesAtuais = Math.max(0, Math.min(200, visitantesAtuais + variacao));
                     SwingUtilities.invokeLater(() ->
                             labelVisitantes.setText("Visitantes: " + visitantesAtuais));
                 }
             }
-        }, 0, 3000); // Atualiza a cada 3 segundos
+        }, 0, 3000);
     }
 
     private void pararSimulacaoVisitantes() {
@@ -424,11 +471,6 @@ public class TelaZoologico extends JFrame {
         labelVisitantes.setText("Visitantes: 0");
     }
 
-    private void recarregarDados() throws IOException, ZooException {
-        statusZoo = new StatusZoo();
-        areaStatus.setText("Dados recarregados com sucesso!");
-        atualizarInterface();
-    }
 
     private void atualizarInterface() {
         labelStatus.setText("Status: " + (statusZoo.isEstaAberto() ? "Aberto" : "Fechado"));

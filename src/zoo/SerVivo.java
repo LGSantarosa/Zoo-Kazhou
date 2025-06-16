@@ -1,4 +1,4 @@
-package zoo;
+package src.zoo;
 
 public abstract class SerVivo {
     private String nome;

@@ -3,7 +3,7 @@ import javax.swing.SwingUtilities;
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            zoo.TelaZoologico tela = new zoo.TelaZoologico();
+            src.zoo.TelaZoologico tela = new src.zoo.TelaZoologico();
             tela.setVisible(true);
         });
     }
